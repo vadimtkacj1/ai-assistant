@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Jarvis AI - Modern Voice-Controlled Assistant</title>
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --primary-gradient: linear-gradient(
+                    135deg,
+                    #667eea 0%,
+                    #764ba2 100%
+                );
+                --accent-gradient: linear-gradient(
+                    135deg,
+                    #f093fb 0%,
+                    #f5576c 100%
+                );
+                --neon-gradient: linear-gradient(
+                    135deg,
+                    #4facfe 0%,
+                    #00f2fe 100%
+                );
+                --dark-gradient: linear-gradient(
+                    135deg,
+                    #0c0c0c 0%,
+                    #1a1a2e 100%
+                );
+                --glass-bg: rgba(255, 255, 255, 0.08);
+                --glass-border: rgba(255, 255, 255, 0.15);
+                --text-primary: #ffffff;
+                --text-secondary: #a0a8b8;
+                --text-muted: #6b7280;
+                --bg-primary: #0a0a0f;
+                --bg-secondary: #11111a;
+                --bg-tertiary: #1a1a2e;
+                --accent-purple: #8b5cf6;
+                --accent-pink: #ec4899;
+                --accent-cyan: #06b6d4;
+                --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.3);
+                --shadow-intense: 0 20px 60px rgba(139, 92, 246, 0.4);
+                --border-radius-sm: 8px;
+                --border-radius-md: 16px;
+                --border-radius-lg: 24px;
+                --border-radius-xl: 32px;
+            }
+
+            [data-theme="light"] {
+                --primary-gradient: linear-gradient(
+                    135deg,
+                    #667eea 0%,
+                    #764ba2 100%
+                );
+                --accent-gradient: linear-gradient(
+                    135deg,
+                    #f093fb 0%,
+                    #f5576c 100%
+                );
+                --neon-gradient: linear-gradient(
+                    135deg,
+                    #4facfe 0%,
+                    #00f2fe 100%
+                );
+                --glass-bg: rgba(0, 0, 0, 0.05);
+                --glass-border: rgba(0, 0, 0, 0.1);
+                --text-primary: #1f2937;
+                --text-secondary: #4b5563;
+                --text-muted: #9ca3af;
+                --bg-primary: #f8fafc;
+                --bg-secondary: #ffffff;
+                --bg-tertiary: #f1f5f9;
+                --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.2);
+                --shadow-intense: 0 20px 60px rgba(139, 92, 246, 0.25);
+            }
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                background: var(--bg-primary);
+                color: var(--text-primary);
+                overflow-x: hidden;
+                line-height: 1.6;
+                position: relative;
+            }
+
+            /* Animated Background */
+            .animated-bg {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -2;
+                background: var(--dark-gradient);
+            }
+
+            .animated-bg::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(
+                        circle at 20% 50%,
+                        rgba(139, 92, 246, 0.15) 0%,
+                        transparent 50%
+                    ),
+                    radial-gradient(
+                        circle at 80% 20%,
+                        rgba(236, 72, 153, 0.15) 0%,
+                        transparent 50%
+                    ),
+                    radial-gradient(
+                        circle at 40% 80%,
+                        rgba(6, 182, 212, 0.15) 0%,
+                        transparent 50%
+                    );
+                animation: backgroundMove 20s ease-in-out infinite alternate;
+            }
+
+            @keyframes backgroundMove {
+                0% {
+                    transform: translateX(-20px) translateY(-10px);
+                }
+                100% {
+                    transform: translateX(20px) translateY(10px);
+                }
+            }
+
+            /* Floating particles */
+            .particles {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                pointer-events: none;
+            }
+
+            .particle {
+                position: absolute;
+                background: var(--accent-purple);
+                border-radius: 50%;
+                opacity: 0.1;
+                animation: float 15s infinite linear;
+            }
+
+            .particle:nth-child(1) {
+                width: 4px;
+                height: 4px;
+                left: 10%;
+                animation-delay: -2s;
+            }
+            .particle:nth-child(2) {
+                width: 6px;
+                height: 6px;
+                left: 20%;
+                animation-delay: -4s;
+            }
+            .particle:nth-child(3) {
+                width: 3px;
+                height: 3px;
+                left: 30%;
+                animation-delay: -6s;
+            }
+            .particle:nth-child(4) {
+                width: 5px;
+                height: 5px;
+                left: 40%;
+                animation-delay: -8s;
+            }
+            .particle:nth-child(5) {
+                width: 4px;
+                height: 4px;
+                left: 50%;
+                animation-delay: -10s;
+            }
+            .particle:nth-child(6) {
+                width: 7px;
+                height: 7px;
+                left: 60%;
+                animation-delay: -12s;
+            }
+            .particle:nth-child(7) {
+                width: 3px;
+                height: 3px;
+                left: 70%;
+                animation-delay: -14s;
+            }
+            .particle:nth-child(8) {
+                width: 5px;
+                height: 5px;
+                left: 80%;
+                animation-delay: -16s;
+            }
+            .particle:nth-child(9) {
+                width: 4px;
+                height: 4px;
+                left: 90%;
+                animation-delay: -18s;
+            }
+
+            @keyframes float {
+                0% {
+                    transform: translateY(100vh) scale(0);
+                }
+                10% {
+                    transform: translateY(80vh) scale(1);
+                }
+                90% {
+                    transform: translateY(-20vh) scale(1);
+                }
+                100% {
+                    transform: translateY(-20vh) scale(0);
+                }
+            }
+
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+                padding: 0 24px;
+            }
+
+            /* Theme Toggle */
+            .theme-toggle {
+                position: fixed;
+                top: 32px;
+                right: 32px;
+                z-index: 1000;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-md);
+                padding: 12px;
+                cursor: pointer;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                color: var(--text-primary);
+                font-size: 20px;
+                width: 48px;
+                height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .theme-toggle:hover {
+                transform: translateY(-2px) rotate(180deg);
+                box-shadow: var(--shadow-glow);
+                background: var(--glass-bg);
+            }
+
+            /* Header */
+            .hero {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                position: relative;
+                padding: 120px 0;
+            }
+
+            .hero-content {
+                max-width: 800px;
+                position: relative;
+                z-index: 10;
+            }
+
+            .hero-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-xl);
+                padding: 8px 20px;
+                margin-bottom: 32px;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--text-secondary);
+                transition: all 0.4s ease;
+            }
+
+            .hero-badge:hover {
+                transform: translateY(-2px);
+                box-shadow: var(--shadow-glow);
+            }
+
+            .hero-badge .pulse-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--accent-gradient);
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                50% {
+                    opacity: 0.7;
+                    transform: scale(1.2);
+                }
+            }
+
+            .hero-title {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: clamp(48px, 8vw, 96px);
+                font-weight: 700;
+                line-height: 1.1;
+                margin-bottom: 24px;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                position: relative;
+            }
+
+            .hero-subtitle {
+                font-size: clamp(18px, 3vw, 24px);
+                color: var(--text-secondary);
+                margin-bottom: 48px;
+                font-weight: 400;
+                line-height: 1.5;
+            }
+
+            .cta-group {
+                display: flex;
+                gap: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+                margin-bottom: 80px;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 32px;
+                border-radius: var(--border-radius-md);
+                font-weight: 600;
+                font-size: 16px;
+                text-decoration: none;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+                border: none;
+                cursor: pointer;
+            }
+
+            .btn::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.2),
+                    transparent
+                );
+                transition: left 0.6s;
+            }
+
+            .btn:hover::before {
+                left: 100%;
+            }
+
+            .btn-primary {
+                background: var(--primary-gradient);
+                color: white;
+                box-shadow: var(--shadow-glow);
+            }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-intense);
+            }
+
+            .btn-secondary {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                color: var(--text-primary);
+            }
+
+            .btn-secondary:hover {
+                transform: translateY(-3px);
+                background: var(--glass-bg);
+                box-shadow: var(--shadow-glow);
+            }
+
+            /* Floating Logo */
+            .floating-logo {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 200px;
+                opacity: 0.03;
+                z-index: 1;
+                animation: logoFloat 8s ease-in-out infinite;
+                pointer-events: none;
+            }
+
+            @keyframes logoFloat {
+                0%,
+                100% {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                50% {
+                    transform: translate(-50%, -60%) rotate(5deg);
+                }
+            }
+
+            /* Glass Cards */
+            .glass-section {
+                padding: 120px 0;
+                position: relative;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 80px;
+            }
+
+            .section-title {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: clamp(36px, 6vw, 56px);
+                font-weight: 700;
+                margin-bottom: 16px;
+                background: var(--neon-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .section-subtitle {
+                font-size: 20px;
+                color: var(--text-secondary);
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 32px;
+            }
+
+            .glass-card {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-lg);
+                padding: 40px 32px;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .glass-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: var(--primary-gradient);
+                transform: scaleX(0);
+                transition: transform 0.6s ease;
+            }
+
+            .glass-card:hover::before {
+                transform: scaleX(1);
+            }
+
+            .glass-card:hover {
+                transform: translateY(-8px);
+                box-shadow: var(--shadow-intense);
+                border-color: rgba(139, 92, 246, 0.3);
+            }
+
+            .card-icon {
+                width: 64px;
+                height: 64px;
+                background: var(--accent-gradient);
+                border-radius: var(--border-radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 28px;
+                color: white;
+                margin-bottom: 24px;
+            }
+
+            .card-title {
+                font-size: 22px;
+                font-weight: 600;
+                margin-bottom: 12px;
+                color: var(--text-primary);
+            }
+
+            .card-description {
+                color: var(--text-secondary);
+                line-height: 1.6;
+            }
+
+            /* Commands Section */
+            .commands-showcase {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-xl);
+                padding: 60px;
+                margin: 80px 0;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .commands-showcase::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--neon-gradient);
+            }
+
+            .showcase-title {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 42px;
+                font-weight: 700;
+                margin-bottom: 20px;
+                background: var(--accent-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .showcase-subtitle {
+                font-size: 20px;
+                color: var(--text-secondary);
+                margin-bottom: 50px;
+            }
+
+            .command-examples {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 24px;
+                margin-top: 40px;
+            }
+
+            .command-item {
+                background: var(--bg-secondary);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-md);
+                padding: 32px 24px;
+                transition: all 0.4s ease;
+                position: relative;
+            }
+
+            .command-item:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-glow);
+                border-color: var(--accent-purple);
+            }
+
+            .command-icon {
+                font-size: 32px;
+                margin-bottom: 16px;
+                background: var(--primary-gradient);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .command-text {
+                font-size: 18px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: var(--text-primary);
+            }
+
+            .command-desc {
+                font-size: 14px;
+                color: var(--text-muted);
+            }
+
+            /* Paper Section */
+            .research-section {
+                background: var(--glass-bg);
+                backdrop-filter: blur(20px);
+                border: 1px solid var(--glass-border);
+                border-radius: var(--border-radius-xl);
+                padding: 80px 60px;
+                text-align: center;
+                position: relative;
+                margin: 120px 0;
+            }
+
+            .research-icon {
+                width: 120px;
+                height: 120px;
+                background: var(--neon-gradient);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 48px;
+                color: white;
+                margin: 0 auto 32px;
+                box-shadow: var(--shadow-glow);
+            }
+
+            .research-title {
+                font-family: "Space Grotesk", sans-serif;
+                font-size: 36px;
+                font-weight: 700;
+                margin-bottom: 20px;
+                color: var(--text-primary);
+            }
+
+            .research-description {
+                font-size: 18px;
+                color: var(--text-secondary);
+                max-width: 700px;
+                margin: 0 auto 40px;
+                line-height: 1.7;
+            }
+
+            .research-meta {
+                display: flex;
+                justify-content: center;
+                gap: 40px;
+                margin: 32px 0;
+                flex-wrap: wrap;
+            }
+
+            .meta-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: var(--bg-secondary);
+                padding: 12px 24px;
+                border-radius: var(--border-radius-xl);
+                font-size: 14px;
+                color: var(--text-secondary);
+            }
+
+            /* Footer */
+            .footer {
+                background: var(--bg-secondary);
+                border-top: 1px solid var(--glass-border);
+                padding: 60px 0 40px;
+                text-align: center;
+                position: relative;
+            }
+
+            .footer::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: var(--primary-gradient);
+            }
+
+            .footer-text {
+                color: var(--text-muted);
+                font-size: 16px;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 0 16px;
+                }
+
+                .hero {
+                    padding: 80px 0;
+                }
+
+                .cta-group {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .btn {
+                    width: 100%;
+                    max-width: 280px;
+                }
+
+                .glass-section {
+                    padding: 80px 0;
+                }
+
+                .cards-grid {
+                    grid-template-columns: 1fr;
+                    gap: 24px;
+                }
+
+                .glass-card {
+                    padding: 32px 24px;
+                }
+
+                .commands-showcase {
+                    padding: 40px 24px;
+                    margin: 60px 0;
+                }
+
+                .command-examples {
+                    grid-template-columns: 1fr;
+                    gap: 16px;
+                }
+
+                .research-section {
+                    padding: 60px 24px;
+                    margin: 80px 0;
+                }
+
+                .research-meta {
+                    flex-direction: column;
+                    gap: 16px;
+                }
+
+                .floating-logo {
+                    font-size: 120px;
+                }
+            }
+
+            /* Smooth scrolling */
+            html {
+                scroll-behavior: smooth;
+            }
+
+            /* Focus states */
+            .btn:focus,
+            .theme-toggle:focus {
+                outline: 2px solid var(--accent-purple);
+                outline-offset: 2px;
+            }
+        </style>
+    </head>
+    <body data-theme="dark">
+        <div class="tech-bg"></div>
+        <div class="grid-overlay"></div>
+
+        <div
+            class="theme-switch"
+            onclick="toggleTheme()"
+            title="Toggle Light Mode"
+            tabindex="0"
+        >
+            <i class="fas fa-sun"></i>
+        </div>
+
+        <div class="container">
+            <header>
+                <div class="logo">🤖</div>
+                <h1>Jarvis AI Assistant</h1>
+                <p class="tagline">
+                    Your modern voice-controlled AI companion with advanced
+                    features and seamless integration
+                </p>
+                <div class="cta-buttons">
+                    <a
+                        href="https://github.com/moego0/ai-assistant"
+                        class="cta-button primary-button"
+                    >
+                        <i class="fab fa-github"></i> View on GitHub
+                    </a>
+                    <a
+                        href="https://github.com/moego0/ai-assistant#-installation-guide"
+                        class="cta-button secondary-button"
+                    >
+                        <i class="fas fa-download"></i> Get Started
+                    </a>
+                </div>
+            </header>
+
+            <section class="demo-section">
+                <h2>✨ Key Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-microphone-alt"></i>
+                        <h3>Voice Recognition</h3>
+                        <p>
+                            Advanced natural language processing with wake word
+                            detection using "Jarvis"
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-desktop"></i>
+                        <h3>Desktop Control</h3>
+                        <p>
+                            Control applications and system settings completely
+                            hands-free
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-home"></i>
+                        <h3>Smart Home</h3>
+                        <p>
+                            Seamlessly control smart devices and home automation
+                            systems
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-code"></i>
+                        <h3>Code Generation</h3>
+                        <p>
+                            Generate code snippets and programming solutions
+                            using voice commands
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-search"></i>
+                        <h3>Web Search</h3>
+                        <p>
+                            Quick web searches and information retrieval through
+                            voice commands
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-rocket"></i>
+                        <h3>Easy Setup</h3>
+                        <p>
+                            Simple installation process with comprehensive
+                            documentation
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>🎯 How to Use</h2>
+                <div class="usage-guide">
+                    <h3>🎤 Activation</h3>
+                    <div class="command-card highlight">
+                        <i class="fas fa-microphone"></i>
+                        <p>
+                            Say <strong>"Jarvis"</strong> to activate your AI
+                            assistant
+                        </p>
+                        <small
+                            >Wait for the acknowledgment sound before giving
+                            your command</small
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-section">
+                <h2>🗣️ Voice Commands</h2>
+                <div class="commands-grid">
+                    <div class="command-card">
+                        <i class="fas fa-play-circle"></i>
+                        <p>"Open [application]"</p>
+                        <small
+                            >Launch applications like Chrome, Spotify, or any
+                            installed software</small
+                        >
+                    </div>
+                    <div class="command-card">
+                        <i class="fas fa-search"></i>
+                        <p>"Search for [query]"</p>
+                        <small
+                            >Perform web searches for information, prices, or
+                            news</small
+                        >
+                    </div>
+                    <div class="command-card">
+                        <i class="fas fa-clock"></i>
+                        <p>"What's the time?"</p>
+                        <small
+                            >Get current time, date, and calendar
+                            information</small
+                        >
+                    </div>
+                    <div class="command-card">
+                        <i class="fas fa-keyboard"></i>
+                        <p>"Type [text]"</p>
+                        <small>Dictate text input for any application</small>
+                    </div>
+                    <div class="command-card">
+                        <i class="fas fa-code"></i>
+                        <p>"Generate code for [task]"</p>
+                        <small
+                            >Create code snippets for various programming
+                            languages</small
+                        >
+                    </div>
+                    <div class="command-card">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>"Control devices"</p>
+                        <small>Manage smart home devices and IoT systems</small>
+                    </div>
+                </div>
+            </section>
+
+            <section class="paper-section">
+                <h2>📚 Research & Documentation</h2>
+                <div class="paper-card">
+                    <i class="fas fa-file-alt paper-icon"></i>
+                    <h3>AI Assistant Research Paper</h3>
+                    <p>
+                        Comprehensive research paper detailing the architecture,
+                        implementation, and performance analysis of the Jarvis
+                        AI Assistant system. Includes technical specifications,
+                        user studies, and future development plans.
+                    </p>
+                    <div class="paper-details">
+                        <span
+                            ><i class="fas fa-calendar"></i> December 2024</span
+                        >
+                        <span
+                            ><i class="fas fa-file-pdf"></i> Technical
+                            Paper</span
+                        >
+                        <span
+                            ><i class="fas fa-graduation-cap"></i>
+                            Research</span
+                        >
+                    </div>
+                    <a
+                        href="papers/research.pdf"
+                        class="download-button"
+                        download
+                    >
+                        <i class="fas fa-download"></i> Download Research Paper
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <p>
+                        &copy; 2024 Jarvis AI Assistant. Built with passion and
+                        cutting-edge AI technology.
+                    </p>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            function toggleTheme() {
+                const body = document.body;
+                const currentTheme = body.getAttribute("data-theme");
+                const themeIcon = document.querySelector(".theme-switch i");
+                const themeSwitch = document.querySelector(".theme-switch");
+
+                if (currentTheme === "light") {
+                    body.setAttribute("data-theme", "dark");
+                    themeIcon.className = "fas fa-sun";
+                    themeSwitch.setAttribute("title", "Toggle Light Mode");
+                    localStorage.setItem("theme", "dark");
+                } else {
+                    body.setAttribute("data-theme", "light");
+                    themeIcon.className = "fas fa-moon";
+                    themeSwitch.setAttribute("title", "Toggle Dark Mode");
+                    localStorage.setItem("theme", "light");
+                }
+            }
+
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "light") {
+                document.body.setAttribute("data-theme", "light");
+                document.querySelector(".theme-switch i").className =
+                    "fas fa-moon";
+                document
+                    .querySelector(".theme-switch")
+                    .setAttribute("title", "Toggle Dark Mode");
+            }
+
+            // Add smooth animations
+            document.addEventListener("DOMContentLoaded", function () {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: "0px 0px -50px 0px",
+                };
+
+                const observer = new IntersectionObserver(function (entries) {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = 1;
+                            entry.target.style.transform = "translateY(0)";
+                        }
+                    });
+                }, observerOptions);
+
+                // Observe all sections and cards
+                document
+                    .querySelectorAll(
+                        ".demo-section, .feature-card, .command-card"
+                    )
+                    .forEach((el) => {
+                        el.style.opacity = 0;
+                        el.style.transform = "translateY(20px)";
+                        el.style.transition =
+                            "opacity 0.6s ease, transform 0.6s ease";
+                        observer.observe(el);
+                    });
+            });
+        </script>
+    </body>
+</html>
